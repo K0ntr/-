@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>💗</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html, body {
+  width:100%; height:100%;
+  background:#0a0208;
+  overflow:hidden;
+  position:fixed;
+  user-select:none;
+  touch-action:none;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+/* ═══════════ ЭКРАН ПРИВЕТСТВИЯ ═══════════ */
+#intro {
+  position:fixed; inset:0;
+  background: radial-gradient(ellipse at center, #2a0818 0%, #0a0208 70%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  z-index:100;
+  cursor:pointer;
+  transition: opacity 1.2s ease;
+  padding: 0 24px;
+}
+#intro.hide { opacity:0; pointer-events:none; }
+
+#intro::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(circle at 50% 50%, rgba(255,77,148,0.10) 0%, transparent 60%);
+  animation: breathe 4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.intro-title {
+  font-family: 'Courier New', monospace;
+  font-size: 24px;
+  letter-spacing: 4px;
+  color: #ffa8d4;
+  text-align: center;
+  line-height: 1.6;
+  text-shadow:
+    0 0 15px #ff4d94,
+    0 0 30px #ff4d94,
+    0 0 60px #d42c72;
+  animation: pulse 2.2s ease-in-out infinite;
+  font-weight: normal;
+  max-width: 90vw;
+}
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.65;
+    text-shadow: 0 0 15px #ff4d94, 0 0 30px #ff4d94;
+  }
+  50% {
+    opacity: 1;
+    text-shadow:
+      0 0 25px #ff6db4,
+      0 0 50px #ff4d94,
+      0 0 90px #d42c72;
+  }
+}
+
+.intro-hint {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 8px;
+  color: #803a60;
+  margin-top: 50px;
+  animation: hintPulse 2.2s ease-in-out infinite;
+  animation-delay: 0.8s;
+}
+@keyframes hintPulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.85; }
+}
+
+/* ═══════════ СЦЕНА ═══════════ */
+#scene {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: #0a0208;
+}
+
+/* Звёзды */
+.star {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: #ffffff;
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 0 6px #ffffff, 0 0 12px #ffa8d4;
+  animation: twinkle 3s infinite;
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.08; transform: scale(0.8); }
+  50% { opacity: 0.75; transform: scale(1.1); }
+}
+
+/* Слова-сердце */
+.word {
+  position: absolute;
+  color: #ff5ca4;
+  font-family: 'Courier New', monospace;
+  font-weight: normal;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+  transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+  text-shadow:
+    0 0 4px #ff4d94,
+    0 0 8px #d42c72,
+    0 0 14px #941a4a,
+    0 0 22px #540d2a;
+  will-change: opacity, transform;
+}
+.word.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* ═══════════ ЦЕНТРАЛЬНАЯ НАДПИСЬ ═══════════ */
+.center-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 20;
+  overflow: hidden;
+  padding: 0 20px;
+}
+
+#center-text {
+  color: #ffffff;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-weight: normal;
+  letter-spacing: 3px;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 1.6s ease, transform 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-shadow:
+    0 0 12px #ffffff,
+    0 0 24px #ffa8d4,
+    0 0 48px #ff4d94,
+    0 0 90px #d42c72,
+    0 0 140px #941a4a;
+  white-space: nowrap;
+  text-align: center;
+}
+#center-text.show {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Пульсация сердца */
+@keyframes heartBeat {
+  0%, 100% { transform: scale(1); }
+  20% { transform: scale(1.03); }
+  40% { transform: scale(1); }
+  60% { transform: scale(1.015); }
+  80% { transform: scale(1); }
+}
+#scene.beating #heart-words {
+  animation: heartBeat 1.4s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 500px) {
+  .intro-title { font-size: 18px; letter-spacing: 3px; }
+}
+@media (max-height: 500px) {
+  .intro-hint { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ ЭКРАН ПРИВЕТСТВИЯ ═══════════ -->
+<div id="intro">
+  <div class="intro-title">Вика,<br>открой и узнаешь</div>
+  <div class="intro-hint">TOUCH</div>
+</div>
+
+<!-- ═══════════ СЦЕНА ═══════════ -->
+<div id="scene">
+  <div id="heart-words"></div>
+</div>
+
+<!-- ═══════════ ЦЕНТРАЛЬНАЯ НАДПИСЬ ═══════════ -->
+<div class="center-overlay">
+  <div id="center-text">I Love You</div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  // ──────────────────────────────────────
+  //  ЯЗЫКИ
+  // ──────────────────────────────────────
+  var PHRASES = [
+    "I love you",        "I love you",       "I love you",
+    "I love you",        "I love you",       "I love you",
+    "Я тебя люблю",      "Я тебе кохаю",     "Te amo",
+    "Te quiero",         "Je t'aime",        "Ich liebe dich",
+    "Ti amo",            "Eu te amo",        "我爱你",
+    "愛してる",           "愛してるよ",        "사랑해",
+    "내가 사랑해",        "أحبك",             "मैं तुमसे प्यार करता हूँ",
+    "Seni seviyorum",    "Kocham cię",       "Σ'αγαπώ",
+    "אני אוהב אותך",     "Jag älskar dig",   "Ik hou van je",
+    "Miluji tě",         "Volim te",         "Te iubesc",
+    "Aš tave myliu",     "Es mīlu tevi",     "Ma armastan sind",
+    "Rakastan sinua",    "Szeretlek",        "Të dua",
+    "Mahal kita",        "Ай лав ю",         "میں تم سے پیار کرتا ہوں",
+    "আমি তোমাকে ভালোবাসি","ฉันรักคุณ",      "Anh yêu em",
+    "Em yêu anh",        "我好想你",          "我愛你",
+    "사랑해요",           "愛しています",      "I love you",
+    "I love you",        "Te amo",           "Я тебя люблю"
+  ];
+
+  // ──────────────────────────────────────
+  //  Уравнение сердца
+  // ──────────────────────────────────────
+  function insideHeart(x, y) {
+    var a = x*x + y*y - 1;
+    return a*a*a - x*x*y*y*y <= 0;
+  }
+
+  // ──────────────────────────────────────
+  //  Сетчатая генерация точек
+  // ──────────────────────────────────────
+  function generateHeartPoints(targetCount) {
+    var points = [];
+    var extent = 2.9;
+    var gridN = Math.ceil(Math.sqrt(targetCount * 2.0));
+    var step = extent / gridN;
+    var half = extent / 2;
+
+    for (var gy = 0; gy < gridN; gy++) {
+      for (var gx = 0; gx < gridN; gx++) {
+        var jx = (Math.random() - 0.5) * 0.7;
+        var jy = (Math.random() - 0.5) * 0.7;
+        var x = -half + (gx + 0.5 + jx) * step;
+        var yScreen = -half + (gy + 0.5 + jy) * step;
+        var yMath = -yScreen;
+        if (insideHeart(x, yMath)) {
+          points.push({ x: x, y: yScreen });
+        }
+      }
+    }
+    return points;
+  }
+
+  // ──────────────────────────────────────
+  //  Фоновые звёзды
+  // ──────────────────────────────────────
+  function createStars() {
+    var scene = document.getElementById("scene");
+    for (var i = 0; i < 80; i++) {
+      var star = document.createElement("div");
+      star.className = "star";
+      star.style.left = (Math.random() * 100) + "%";
+      star.style.top = (Math.random() * 100) + "%";
+      var size = Math.random() < 0.85 ? 1 : 2;
+      star.style.width = size + "px";
+      star.style.height = size + "px";
+      star.style.animationDelay = (Math.random() * 3) + "s";
+      star.style.animationDuration = (2 + Math.random() * 3) + "s";
+      scene.appendChild(star);
+    }
+  }
+
+  // ──────────────────────────────────────
+  //  Раскрытие
+  // ──────────────────────────────────────
+  var revealed = false;
+
+  function reveal() {
+    if (revealed) return;
+    revealed = true;
+
+    if (navigator.vibrate) {
+      try { navigator.vibrate(30); } catch(e){}
+    }
+
+    var intro = document.getElementById("intro");
+    intro.classList.add("hide");
+    setTimeout(function(){ intro.style.display = "none"; }, 1300);
+
+    var scene = document.getElementById("scene");
+    var container = document.getElementById("heart-words");
+    var w = window.innerWidth;
+    var h = window.innerHeight;
+
+    var scale = Math.min(w * 0.36, h * 0.38);
+
+    var fontSize;
+    if (w < 360) fontSize = 7;
+    else if (w < 500) fontSize = 8;
+    else if (w < 800) fontSize = 10;
+    else if (w < 1200) fontSize = 11;
+    else fontSize = 12;
+
+    var count;
+    if (w < 360) count = 250;
+    else if (w < 500) count = 350;
+    else if (w < 900) count = 500;
+    else if (w < 1400) count = 650;
+    else count = 800;
+
+    var points = generateHeartPoints(count);
+
+    points.forEach(function(p) {
+      p.dist = Math.sqrt(p.x * p.x + p.y * p.y);
+    });
+    points.sort(function(a, b) { return a.dist - b.dist; });
+
+    var centerX = w / 2;
+    var centerY = h / 2;
+
+    points.forEach(function(pt, i) {
+      var el = document.createElement("div");
+      el.className = "word";
+      el.textContent = PHRASES[i % PHRASES.length];
+      el.style.fontSize = fontSize + "px";
+      el.style.left = (centerX + pt.x * scale) + "px";
+      el.style.top = (centerY + pt.y * scale) + "px";
+      container.appendChild(el);
+
+      var delay = 200 + pt.dist * 250 + Math.random() * 500;
+
+      setTimeout(function() {
+        el.classList.add("show");
+      }, delay);
+    });
+
+    // ═══ I LOVE YOU ═══
+    setTimeout(function() {
+      var centerText = document.getElementById("center-text");
+      var baseSize = Math.min(w * 0.09, 52);
+      if (baseSize < 26) baseSize = 26;
+      centerText.style.fontSize = baseSize + "px";
+      centerText.classList.add("show");
+    }, 1500);
+
+    // ═══ Пульс сердца ═══
+    setTimeout(function() {
+      scene.classList.add("beating");
+    }, 4500);
+  }
+
+  // ──────────────────────────────────────
+  //  Слушатели
+  // ──────────────────────────────────────
+  var intro = document.getElementById("intro");
+
+  intro.addEventListener("click", function(e) {
+    e.preventDefault();
+    reveal();
+  });
+
+  intro.addEventListener("touchstart", function(e) {
+    e.preventDefault();
+    reveal();
+  }, { passive: false });
+
+  createStars();
+
+})();
+</script>
+</body>
+</html>
